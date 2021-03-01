@@ -1,26 +1,26 @@
 {
   "files": {
     "main.css": "/english-typing-master/static/css/main.8c8b27cf.chunk.css",
-    "main.js": "/english-typing-master/static/js/main.ab4aed54.chunk.js",
-    "main.js.map": "/english-typing-master/static/js/main.ab4aed54.chunk.js.map",
-    "runtime-main.js": "/english-typing-master/static/js/runtime-main.51b58079.js",
-    "runtime-main.js.map": "/english-typing-master/static/js/runtime-main.51b58079.js.map",
+    "main.js": "/english-typing-master/static/js/main.26e6190d.chunk.js",
+    "main.js.map": "/english-typing-master/static/js/main.26e6190d.chunk.js.map",
+    "runtime-main.js": "/english-typing-master/static/js/runtime-main.8a09582d.js",
+    "runtime-main.js.map": "/english-typing-master/static/js/runtime-main.8a09582d.js.map",
     "static/css/2.150d169a.chunk.css": "/english-typing-master/static/css/2.150d169a.chunk.css",
-    "static/js/2.00a40f1a.chunk.js": "/english-typing-master/static/js/2.00a40f1a.chunk.js",
-    "static/js/2.00a40f1a.chunk.js.map": "/english-typing-master/static/js/2.00a40f1a.chunk.js.map",
-    "static/js/3.76082dcb.chunk.js": "/english-typing-master/static/js/3.76082dcb.chunk.js",
-    "static/js/3.76082dcb.chunk.js.map": "/english-typing-master/static/js/3.76082dcb.chunk.js.map",
+    "static/js/2.780291b2.chunk.js": "/english-typing-master/static/js/2.780291b2.chunk.js",
+    "static/js/2.780291b2.chunk.js.map": "/english-typing-master/static/js/2.780291b2.chunk.js.map",
+    "static/js/3.774bcbf9.chunk.js": "/english-typing-master/static/js/3.774bcbf9.chunk.js",
+    "static/js/3.774bcbf9.chunk.js.map": "/english-typing-master/static/js/3.774bcbf9.chunk.js.map",
     "index.html": "/english-typing-master/index.html",
     "static/css/2.150d169a.chunk.css.map": "/english-typing-master/static/css/2.150d169a.chunk.css.map",
     "static/css/main.8c8b27cf.chunk.css.map": "/english-typing-master/static/css/main.8c8b27cf.chunk.css.map",
-    "static/js/2.00a40f1a.chunk.js.LICENSE.txt": "/english-typing-master/static/js/2.00a40f1a.chunk.js.LICENSE.txt",
+    "static/js/2.780291b2.chunk.js.LICENSE.txt": "/english-typing-master/static/js/2.780291b2.chunk.js.LICENSE.txt",
     "static/media/logo.6ce24c58.svg": "/english-typing-master/static/media/logo.6ce24c58.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.51b58079.js",
+    "static/js/runtime-main.8a09582d.js",
     "static/css/2.150d169a.chunk.css",
-    "static/js/2.00a40f1a.chunk.js",
+    "static/js/2.780291b2.chunk.js",
     "static/css/main.8c8b27cf.chunk.css",
-    "static/js/main.ab4aed54.chunk.js"
+    "static/js/main.26e6190d.chunk.js"
   ]
 }

@@ -1,29 +1,13 @@
 import React, { Component } from "react"
-import { Button, Form, Row, Col } from "react-bootstrap"
+import { Button, Form, Row, Col, Modal } from "react-bootstrap"
 import styled from "styled-components"
-
-const data = `We have created some responsive starter templates with CSS.
-You are free to modify, save, share, and use them in all your projects.
-Header, equal columns and footer:
-Header, unequal columns and footer:
-`
-
-const Btn = styled.div`
-  color: "#343A40";
-  :hover {
-    background-color: #23272b;
-  }
-`
 
 class TextBox extends Component {
   constructor(props) {
     super(props)
     this.state = {
       text: "",
-      data: data.split(" ").filter((word, index_1) => {
-        if (word !== "") return word
-        return ""
-      }),
+      data: [],
       currentWordIndex: 0,
       wrongWord: false,
       wrongWords: [],
@@ -34,8 +18,40 @@ class TextBox extends Component {
       isTimerVisible: true,
       timerReference: "",
       timerDisplayValue: "",
+
+      modalState: false,
+      modalData: "",
     }
     this.changeText = this.changeText.bind(this)
+    this.handleShow = this.handleShow.bind(this)
+    this.handleClose = this.handleClose.bind(this)
+  }
+  filterDataAndSave = () => {
+    var result = this.state.modalData.split(" ").filter((word, index_1) => {
+      if (word !== "") return word
+      return ""
+    })
+
+    this.setState({ data: result })
+  }
+  handleShow = () => {
+    this.setState({ modalState: true })
+  }
+  handleClose = () => {
+    this.setState({ modalState: false })
+  }
+  saveData = () => {
+    this.filterDataAndSave()
+    this.handleClose()
+  }
+  saveModalData = e => {
+    var data = e.target.value.trim()
+    console.log(data, e.target.which)
+    if (data.length) this.setState({ modalData: data })
+  }
+  resetModalData = () => {
+    this.setState({ modalData: "" })
+    this.setState({ data: [] })
   }
   componentDidMount() {
     //this.toBottom()
@@ -152,7 +168,40 @@ class TextBox extends Component {
         </div>
 
         <Row>
-          <Col lg='3' />
+          <Col lg='3' className='text-right'>
+            <Button size='lg' onClick={this.handleShow}>
+              User Input
+            </Button>
+            <Modal
+              size='lg'
+              show={this.state.modalState}
+              onHide={this.handleClose}
+            >
+              <Modal.Body>
+                <Form.Group controlId='exampleForm.ControlTextarea1'>
+                  <Form.Label>Paste the Paragraph</Form.Label>
+                  <Form.Control
+                    as='textarea'
+                    rows={5}
+                    onChange={this.saveModalData}
+                  />
+                </Form.Group>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant='danger' onClick={this.resetModalData}>
+                  Reset
+                </Button>
+
+                <Button variant='secondary' onClick={this.handleClose}>
+                  Close
+                </Button>
+
+                <Button variant='primary' onClick={this.saveData}>
+                  Save Changes
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          </Col>
           <Col lg='3'>
             <Form.Control
               style={{

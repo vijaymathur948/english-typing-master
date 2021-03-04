@@ -71,7 +71,7 @@ class TextBox extends Component {
     this.setState({ data: [] })
   }
   componentDidMount() {
-    //this.toBottom()
+    //this.scrollDown()
     //  initialize the timer default value with pading
     this.initializeTimer()
   }
@@ -129,24 +129,35 @@ class TextBox extends Component {
       this.toggleTimer()
     }
     if (e.which === 32 && this.state.text) {
+      // this method will be useful if you want to type
       // this.setState({ data: this.state.data + this.state.text })
-      this.setState({ text: "" })
-      // setTimeout(() => this.setState({ text: "" }), 10)
-      this.setState({ currentWordIndex: this.state.currentWordIndex + 1 })
-      // reset the flag
+
+      if (this.state.text !== this.state.data[this.state.currentWordIndex]) {
+        await this.setState({ wrongWord: true })
+      }
+
       if (this.state.wrongWord) {
         await this.setState({
           wrongWords: [...this.state.wrongWords, this.state.currentWordIndex],
         })
       }
+      await this.setState({ currentWordIndex: this.state.currentWordIndex + 1 })
+      // reset the flag
+
+      this.setState({ text: "" })
       this.setState({ wrongWord: false })
-      //      this.toBottom()
+
+      // after every words scrollDown function will be executed
+      if (this.state.currentWordIndex % 50 === 0) {
+        this.scrollDown()
+      }
     }
   }
-  toBottom = () => {
+  scrollDown = () => {
     var element = document.getElementById("data")
-    var height = element.scrollHeight
-    element.scrollTop = height
+    //    var height = element.scrollHeight
+    var difference = 150
+    element.scrollTop += difference
   }
 
   render() {
@@ -163,6 +174,7 @@ class TextBox extends Component {
             overflow: "auto",
             border: "1px solid gray",
             backgroundColor: "darkslategray",
+            scrollBehavior: "smooth",
           }}
         >
           {this.state.data.map((word, index_1) => {
@@ -196,6 +208,7 @@ class TextBox extends Component {
             <Button size='lg' onClick={this.handleShow}>
               User Input
             </Button>
+
             <Modal
               size='lg'
               show={this.state.modalState}

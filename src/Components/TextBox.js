@@ -6,12 +6,14 @@ class TextBox extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      // textArea related variables
       text: "",
       data: [],
       currentWordIndex: 0,
       wrongWord: false,
       wrongWords: [],
 
+      // timer related variables
       minutes: 1,
       seconds: 60,
       isTimerOn: false,
@@ -19,13 +21,28 @@ class TextBox extends Component {
       timerReference: "",
       timerDisplayValue: "",
 
+      // modal related variables
       modalState: false,
       modalData: "",
+
+      // changing timer through conditional operator
+      timerInput: false,
     }
     this.changeText = this.changeText.bind(this)
     this.handleShow = this.handleShow.bind(this)
     this.handleClose = this.handleClose.bind(this)
   }
+  toggleTimerInput = () => {
+    this.setState({ timerInput: !this.state.timerInput })
+  }
+
+  changeTimer = async e => {
+    var minutes = Number(e.target.value)
+    if (minutes !== undefined) await this.setState({ minutes: minutes })
+    this.initializeTimer()
+    this.toggleTimerInput()
+  }
+
   filterDataAndSave = () => {
     var result = this.state.modalData.split(" ").filter((word, index_1) => {
       if (word !== "") return word
@@ -46,7 +63,7 @@ class TextBox extends Component {
   }
   saveModalData = e => {
     var data = e.target.value.trim()
-    console.log(data, e.target.which)
+    data = data.replaceAll("\n", " ")
     if (data.length) this.setState({ modalData: data })
   }
   resetModalData = () => {
@@ -56,6 +73,9 @@ class TextBox extends Component {
   componentDidMount() {
     //this.toBottom()
     //  initialize the timer default value with pading
+    this.initializeTimer()
+  }
+  initializeTimer = () => {
     this.setState({ timerDisplayValue: this.state.minutes + ":00" })
   }
   toggleTimerVisibility = () => {
@@ -100,10 +120,13 @@ class TextBox extends Component {
       }
     }
   }
+  toggleTimer = () => {
+    this.setState({ isTimerOn: !this.state.isTimerOn })
+  }
   onKeyPress = async e => {
     if (!this.state.isTimerOn) {
       this.startTimer()
-      this.setState({ isTimerOn: true })
+      this.toggleTimer()
     }
     if (e.which === 32 && this.state.text) {
       // this.setState({ data: this.state.data + this.state.text })
@@ -125,9 +148,10 @@ class TextBox extends Component {
     var height = element.scrollHeight
     element.scrollTop = height
   }
+
   render() {
     return (
-      <>
+      <div>
         <div
           id='data'
           style={{
@@ -183,6 +207,7 @@ class TextBox extends Component {
                   <Form.Control
                     as='textarea'
                     rows={5}
+                    defaultValue={this.state.data.join(" ")}
                     onChange={this.saveModalData}
                   />
                 </Form.Group>
@@ -215,18 +240,34 @@ class TextBox extends Component {
               onKeyPress={this.onKeyPress}
             />
           </Col>
-          <Col>
-            <Button
-              variant='dark'
-              size='lg'
-              style={{ color: this.state.isTimerVisible ? "" : "#343A40" }}
-              onClick={this.toggleTimerVisibility}
-            >
-              {this.state.timerDisplayValue}
-            </Button>
+          <Col lg='2'>
+            {!this.state.timerInput && (
+              <Button
+                variant='dark'
+                size='lg'
+                style={{ color: this.state.isTimerVisible ? "" : "#343A40" }}
+                onClick={this.toggleTimerVisibility}
+                onDoubleClick={this.toggleTimerInput}
+              >
+                {this.state.timerDisplayValue}
+              </Button>
+            )}
+            {this.state.timerInput && (
+              <Form.Control
+                as='select'
+                size='lg'
+                onChange={this.changeTimer}
+                defaultValue={this.state.minutes}
+              >
+                <option value='1'>1</option>
+                <option value='2'>2</option>
+                <option value='4'>4</option>
+                <option value='5'>5</option>
+              </Form.Control>
+            )}
           </Col>
         </Row>
-      </>
+      </div>
     )
   }
 }

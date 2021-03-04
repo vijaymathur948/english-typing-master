@@ -12,7 +12,8 @@ git commit -m $message
 # it will build our project
 npm run build
 git push origin master  
-
+# this custom script will deploy the build folder to github repo in a gh-pages branch
+npm run deploy
 }
 gitPush -message $args[0]
 

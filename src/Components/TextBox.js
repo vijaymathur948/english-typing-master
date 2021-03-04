@@ -27,10 +27,22 @@ class TextBox extends Component {
 
       // changing timer through conditional operator
       timerInput: false,
+
+      // some formatting relating tools
+      case: false,
     }
     this.changeText = this.changeText.bind(this)
     this.handleShow = this.handleShow.bind(this)
     this.handleClose = this.handleClose.bind(this)
+  }
+
+  toggleCase = () => {
+    if (this.state.case) {
+      this.setState({ modalData: this.state.modalData.toLowerCase() })
+    } else {
+      this.setState({ modalData: this.state.modalData.toUpperCase() })
+    }
+    this.setState({ case: !this.state.case })
   }
   toggleTimerInput = () => {
     this.setState({ timerInput: !this.state.timerInput })
@@ -44,7 +56,9 @@ class TextBox extends Component {
   }
 
   filterDataAndSave = () => {
-    var result = this.state.modalData.split(" ").filter((word, index_1) => {
+    var result = this.state.modalData.replaceAll("\n", " ")
+
+    result = result.split(" ").filter((word, index_1) => {
       if (word !== "") return word
       return ""
     })
@@ -62,9 +76,8 @@ class TextBox extends Component {
     this.handleClose()
   }
   saveModalData = e => {
-    var data = e.target.value.trim()
-    data = data.replaceAll("\n", " ")
-    if (data.length) this.setState({ modalData: data })
+    var data = e.target.value
+    this.setState({ modalData: data })
   }
   resetModalData = () => {
     this.setState({ modalData: "" })
@@ -215,13 +228,21 @@ class TextBox extends Component {
               onHide={this.handleClose}
             >
               <Modal.Body>
-                <Form.Group controlId='exampleForm.ControlTextarea1'>
+                <Form.Group controlId='modal.data'>
                   <Form.Label>Paste the Paragraph</Form.Label>
                   <Form.Control
                     as='textarea'
                     rows={5}
-                    defaultValue={this.state.data.join(" ")}
+                    value={this.state.modalData}
                     onChange={this.saveModalData}
+                  />
+                </Form.Group>
+                <Form.Group controlId='modal.case'>
+                  <Form.Check
+                    type='checkbox'
+                    checked={this.state.case}
+                    onChange={this.toggleCase}
+                    label='Toggle Case'
                   />
                 </Form.Group>
               </Modal.Body>

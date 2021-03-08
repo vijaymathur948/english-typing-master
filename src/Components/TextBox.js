@@ -1,6 +1,7 @@
 import React, { Component } from "react"
 import { Button, Form, Row, Col, Modal } from "react-bootstrap"
 import styled from "styled-components"
+import { Link } from "react-router-dom"
 
 class TextBox extends Component {
   constructor(props) {
@@ -173,6 +174,42 @@ class TextBox extends Component {
     element.scrollTop += difference
   }
 
+  importFile = e => {
+    var str = "this is just a content"
+    //    var fi = new Blob([str])
+    // var fi = new File([str], "simple.txt")
+    // console.log(fi)
+    // fi.text()
+    //   .then(response => console.log(response))
+    //   .catch(error => console.log(error))
+
+    var file = new FileReader()
+    file.onload = e => {
+      var text = e.target.result
+      this.setState({ modalData: text })
+    }
+    file.readAsText(e.target.files[0])
+  }
+  exportFile = () => {
+    if (this.state.modalData.trim()) {
+      var fileName = "data.txt"
+      var element = document.createElement("a")
+      element.setAttribute(
+        "href",
+        "data:text/plain;charset=utf-8," +
+          encodeURIComponent(this.state.modalData)
+      )
+
+      element.setAttribute("download", fileName)
+
+      element.style.display = "none"
+      document.body.appendChild(element)
+
+      element.click()
+
+      document.body.removeChild(element)
+    }
+  }
   render() {
     return (
       <div>
@@ -237,13 +274,34 @@ class TextBox extends Component {
                     onChange={this.saveModalData}
                   />
                 </Form.Group>
-                <Form.Group controlId='modal.case'>
-                  <Form.Check
-                    type='checkbox'
-                    checked={this.state.case}
-                    onChange={this.toggleCase}
-                    label='Toggle Case'
-                  />
+                <Form.Group style={{ display: "inline-flex" }}>
+                  <Form.Group controlId='modal.case'>
+                    <Form.Check
+                      inline
+                      type='checkbox'
+                      checked={this.state.case}
+                      onChange={this.toggleCase}
+                      label='Toggle Case'
+                    />
+                  </Form.Group>
+                  <Form.Group className='mx-2'>
+                    <Button onClick={this.exportFile}>Download</Button>
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.File
+                      id='modal.file'
+                      onChange={this.importFile}
+                      hidden={true}
+                    />
+                    <Button
+                      onClick={() => {
+                        var fileElement = document.getElementById("modal.file")
+                        fileElement.click()
+                      }}
+                    >
+                      Import
+                    </Button>
+                  </Form.Group>
                 </Form.Group>
               </Modal.Body>
               <Modal.Footer>
@@ -274,7 +332,7 @@ class TextBox extends Component {
               onKeyPress={this.onKeyPress}
             />
           </Col>
-          <Col lg='2'>
+          {/* <Col lg='2'>
             {!this.state.timerInput && (
               <Button
                 variant='dark'
@@ -300,6 +358,7 @@ class TextBox extends Component {
               </Form.Control>
             )}
           </Col>
+        */}
         </Row>
       </div>
     )

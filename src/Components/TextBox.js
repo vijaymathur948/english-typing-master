@@ -49,17 +49,12 @@ class TextBox extends Component {
   toggleTimerInput = () => {
     this.setState({ timerInput: !this.state.timerInput })
   }
-
   changeTimer = async e => {
     var minutes = Number(e.target.value)
     if (minutes !== undefined) await this.setState({ minutes: minutes })
     this.initializeTimer()
     this.toggleTimerInput()
   }
-  toggleShowData = () => {
-    this.setState({ isShowData: !this.state.isShowData })
-  }
-
   filterDataAndSave = () => {
     var result = this.state.modalData.replaceAll("\n", " ")
 
@@ -79,9 +74,6 @@ class TextBox extends Component {
   saveData = () => {
     this.filterDataAndSave()
     this.handleClose()
-    if (!this.state.isShowData) {
-      this.toggleShowData()
-    }
     setTimeout(() => {
       this.calculateLastWord()
     }, 1000)
@@ -105,8 +97,7 @@ class TextBox extends Component {
     //  initialize the timer default value with pading
     this.initializeTimer()
   }
-
-  findOutLastWord = () => {
+  findOutLastWord_1 = () => {
     // 40px for left and right side padding
     // if we are adding scrollbar then we have to remove 23px from total width
     var totalWidth = document.getElementById("data").offsetWidth - 40
@@ -119,6 +110,22 @@ class TextBox extends Component {
 
         totalWidth = document.getElementById("data").offsetWidth - 40
         totalWidth -= currentElementwidth + 10
+      }
+    })
+    this.setState({
+      lastWords: [...this.state.lastWords, this.state.data.length],
+    })
+  }
+  findOutLastWord = () => {
+    var top = 0
+    this.state.data.map((word, index_1) => {
+      var currentElementTop = document.getElementById(index_1).offsetTop
+      if (top !== currentElementTop) {
+        top = currentElementTop
+
+        if (index_1 - 1 > 0) {
+          this.setState({ lastWords: [...this.state.lastWords, index_1] })
+        }
       }
     })
     this.setState({
@@ -201,7 +208,6 @@ class TextBox extends Component {
       if (this.state.lastWords.includes(this.state.currentWordIndex)) {
         this.scrollTo(70)
         if (this.state.currentWordIndex === this.state.data.length) {
-          console.log("catched him")
         }
       }
     }
@@ -211,7 +217,6 @@ class TextBox extends Component {
     //    var height = element.scrollHeight
     element.scrollTop += value
   }
-
   importFile = e => {
     var str = "this is just a content"
     //    var fi = new Blob([str])
@@ -256,11 +261,11 @@ class TextBox extends Component {
           style={{
             fontSize: "30px",
             margin: "20px",
-            padding: "20px",
-            paddingBottom: "1px",
+            padding: "20px 20px 1px 40px",
             height: "234px",
             overflow: "hidden",
             border: "1px solid gray",
+            borderRadius: "50px",
             backgroundColor: "darkslategray",
             scrollBehavior: "smooth",
           }}
@@ -277,7 +282,7 @@ class TextBox extends Component {
                         ? "red"
                         : "#007bff"
                       : "silver",
-                  borderRadius: "3px",
+                  borderRadius: "50px",
                   padding: "10px",
                   marginRight: "10px",
                   marginBottom: "20px",
@@ -296,7 +301,11 @@ class TextBox extends Component {
         <Row className='mt-4'>
           <Col lg='3' className='text-right'>
             <Button
-              style={{ fontSize: "35px" }}
+              style={{
+                fontSize: "35px",
+                borderRadius: "50px",
+                padding: "10px 70px",
+              }}
               size='lg'
               onClick={this.handleShow}
             >
@@ -364,7 +373,7 @@ class TextBox extends Component {
               </Modal.Footer>
             </Modal>
           </Col>
-          <Col lg='5'>
+          <Col lg='6'>
             <Form.Control
               style={{
                 fontSize: "40px",
@@ -372,8 +381,11 @@ class TextBox extends Component {
                 color: "white",
                 backgroundColor: "#343a40",
                 borderColor: "transparent",
+                borderRadius: "50px",
                 boxShadow: "none",
+                textAlign: "center",
               }}
+              placeholder={this.state.isTimerOn ? "" : "Start Typing..."}
               value={this.state.text}
               type='text'
               autoFocus={false}
@@ -381,7 +393,7 @@ class TextBox extends Component {
               onKeyPress={this.onKeyPress}
             />
           </Col>
-          <Col lg='2'>
+          <Col lg='3'>
             {!this.state.timerInput && (
               <Button
                 variant='dark'
@@ -389,6 +401,7 @@ class TextBox extends Component {
                 style={{
                   color: this.state.isTimerVisible ? "" : "#343A40",
                   fontSize: "35px",
+                  borderRadius: "50px",
                 }}
                 onClick={this.toggleTimerVisibility}
                 onDoubleClick={this.toggleTimerInput}
@@ -400,7 +413,7 @@ class TextBox extends Component {
               <Form.Control
                 as='select'
                 size='lg'
-                style={{ fontSize: "35px" }}
+                style={{ fontSize: "35px", borderRadius: "50px" }}
                 onChange={this.changeTimer}
                 defaultValue={this.state.minutes}
               >
@@ -410,6 +423,17 @@ class TextBox extends Component {
                 <option value='5'>5</option>
               </Form.Control>
             )}
+            <Button
+              variant='dark'
+              size='lg'
+              style={{
+                fontSize: "35px",
+                borderRadius: "50px",
+              }}
+              className='ml-2'
+            >
+              Refresh
+            </Button>
           </Col>
         </Row>
       </div>

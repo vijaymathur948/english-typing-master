@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { Button, Form, Row, Col, Modal } from "react-bootstrap"
+import { Button, Form, Row, Col, Modal, Spinner } from "react-bootstrap"
 import styled from "styled-components"
 import { Link } from "react-router-dom"
 
@@ -31,6 +31,7 @@ class TextBox extends Component {
 
       // some formatting relating tools
       case: false,
+      lastWords: [],
     }
     this.changeText = this.changeText.bind(this)
     this.handleShow = this.handleShow.bind(this)
@@ -55,6 +56,9 @@ class TextBox extends Component {
     this.initializeTimer()
     this.toggleTimerInput()
   }
+  toggleShowData = () => {
+    this.setState({ isShowData: !this.state.isShowData })
+  }
 
   filterDataAndSave = () => {
     var result = this.state.modalData.replaceAll("\n", " ")
@@ -75,6 +79,18 @@ class TextBox extends Component {
   saveData = () => {
     this.filterDataAndSave()
     this.handleClose()
+    if (!this.state.isShowData) {
+      this.toggleShowData()
+    }
+    setTimeout(() => {
+      this.calculateLastWord()
+    }, 1000)
+  }
+  calculateLastWord = () => {
+    //  first reset the array before starting operations
+
+    this.setState({ lastWords: [] })
+    this.findOutLastWord()
   }
   saveModalData = e => {
     var data = e.target.value
@@ -88,6 +104,26 @@ class TextBox extends Component {
     //this.scrollDown()
     //  initialize the timer default value with pading
     this.initializeTimer()
+  }
+
+  findOutLastWord = () => {
+    // 40px for left and right side padding
+    // if we are adding scrollbar then we have to remove 23px from total width
+    var totalWidth = document.getElementById("data").offsetWidth - 40
+    this.state.data.map((word, index_1) => {
+      var currentElementwidth = document.getElementById(index_1).offsetWidth
+      //  10px is for margin from right side
+      totalWidth -= currentElementwidth + 10
+      if (totalWidth < 1) {
+        this.setState({ lastWords: [...this.state.lastWords, index_1] })
+
+        totalWidth = document.getElementById("data").offsetWidth - 40
+        totalWidth -= currentElementwidth + 10
+      }
+    })
+    this.setState({
+      lastWords: [...this.state.lastWords, this.state.data.length],
+    })
   }
   initializeTimer = () => {
     this.setState({ timerDisplayValue: this.state.minutes + ":00" })
@@ -162,16 +198,18 @@ class TextBox extends Component {
       this.setState({ wrongWord: false })
 
       // after every words scrollDown function will be executed
-      if (this.state.currentWordIndex % 50 === 0) {
-        this.scrollDown()
+      if (this.state.lastWords.includes(this.state.currentWordIndex)) {
+        this.scrollTo(70)
+        if (this.state.currentWordIndex === this.state.data.length) {
+          console.log("catched him")
+        }
       }
     }
   }
-  scrollDown = () => {
+  scrollTo = value => {
     var element = document.getElementById("data")
     //    var height = element.scrollHeight
-    var difference = 150
-    element.scrollTop += difference
+    element.scrollTop += value
   }
 
   importFile = e => {
@@ -219,9 +257,9 @@ class TextBox extends Component {
             fontSize: "30px",
             margin: "20px",
             padding: "20px",
-            paddingBottom: "60px",
-            maxHeight: "400px",
-            overflow: "auto",
+            paddingBottom: "1px",
+            height: "234px",
+            overflow: "hidden",
             border: "1px solid gray",
             backgroundColor: "darkslategray",
             scrollBehavior: "smooth",
@@ -231,6 +269,7 @@ class TextBox extends Component {
             return (
               <h4
                 key={index_1}
+                id={index_1}
                 style={{
                   backgroundColor:
                     index_1 === this.state.currentWordIndex
@@ -241,6 +280,7 @@ class TextBox extends Component {
                   borderRadius: "3px",
                   padding: "10px",
                   marginRight: "10px",
+                  marginBottom: "20px",
                   display: "inline-block",
                   color: this.state.wrongWords.includes(index_1)
                     ? "red"
@@ -253,10 +293,14 @@ class TextBox extends Component {
           })}
         </div>
 
-        <Row>
+        <Row className='mt-4'>
           <Col lg='3' className='text-right'>
-            <Button size='lg' onClick={this.handleShow}>
-              User Input
+            <Button
+              style={{ fontSize: "35px" }}
+              size='lg'
+              onClick={this.handleShow}
+            >
+              Input
             </Button>
 
             <Modal
@@ -285,9 +329,6 @@ class TextBox extends Component {
                     />
                   </Form.Group>
                   <Form.Group className='mx-2'>
-                    <Button onClick={this.exportFile}>Download</Button>
-                  </Form.Group>
-                  <Form.Group>
                     <Form.File
                       id='modal.file'
                       onChange={this.importFile}
@@ -299,8 +340,12 @@ class TextBox extends Component {
                         fileElement.click()
                       }}
                     >
-                      Import
+                      Upload
                     </Button>
+                  </Form.Group>
+
+                  <Form.Group className='mx-2'>
+                    <Button onClick={this.exportFile}>Download</Button>
                   </Form.Group>
                 </Form.Group>
               </Modal.Body>
@@ -319,11 +364,15 @@ class TextBox extends Component {
               </Modal.Footer>
             </Modal>
           </Col>
-          <Col lg='3'>
+          <Col lg='5'>
             <Form.Control
               style={{
-                fontSize: "25px",
-                fontWeight: "bold",
+                fontSize: "40px",
+                padding: "30px",
+                color: "white",
+                backgroundColor: "#343a40",
+                borderColor: "transparent",
+                boxShadow: "none",
               }}
               value={this.state.text}
               type='text'
@@ -332,12 +381,15 @@ class TextBox extends Component {
               onKeyPress={this.onKeyPress}
             />
           </Col>
-          {/* <Col lg='2'>
+          <Col lg='2'>
             {!this.state.timerInput && (
               <Button
                 variant='dark'
                 size='lg'
-                style={{ color: this.state.isTimerVisible ? "" : "#343A40" }}
+                style={{
+                  color: this.state.isTimerVisible ? "" : "#343A40",
+                  fontSize: "35px",
+                }}
                 onClick={this.toggleTimerVisibility}
                 onDoubleClick={this.toggleTimerInput}
               >
@@ -348,6 +400,7 @@ class TextBox extends Component {
               <Form.Control
                 as='select'
                 size='lg'
+                style={{ fontSize: "35px" }}
                 onChange={this.changeTimer}
                 defaultValue={this.state.minutes}
               >
@@ -358,7 +411,6 @@ class TextBox extends Component {
               </Form.Control>
             )}
           </Col>
-        */}
         </Row>
       </div>
     )
